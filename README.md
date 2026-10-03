@@ -4,16 +4,76 @@ Aplikasi manajemen tugas (to-do list) modern dengan arsitektur fullstack terpisa
 
 ---
 
+## 🖼 Tampilan
+
+<div align="center">
+
+| Tema Terang | Tema Gelap |
+| :---: | :---: |
+| <img src="docs/screenshot.png" alt="Tampilan tema terang" width="430"> | <img src="docs/screenshot-dark.png" alt="Tampilan tema gelap" width="430"> |
+
+| Mobile (360px) | Mobile (360px) |
+| :---: | :---: |
+| <img src="docs/screenshot-mobile.png" alt="Tampilan mobile tema terang" width="230"> | <img src="docs/screenshot-mobile-dark.png" alt="Tampilan mobile tema gelap" width="230"> |
+
+</div>
+
+<details>
+<summary>Tampilan tablet dan state error</summary>
+
+**Tablet (768px)**
+
+<img src="docs/screenshot-tablet.png" alt="Tampilan tablet 768px" width="460">
+
+**State error saat backend tidak terjangkau**
+
+<img src="docs/screenshot-error.png" alt="Tampilan error" width="460">
+
+</details>
+
+---
+
 ## 🚀 Fitur Utama
 
 - **Tampilkan Daftar Tugas**: Menampilkan daftar tugas terurut dari yang paling baru (`ORDER BY id DESC`).
 - **Tambah Tugas Baru**: Input terkontrol dengan validasi (tidak boleh kosong, maksimal 200 karakter) dan tombol dinonaktifkan selama proses request.
 - **Centang Selesai (Toggle)**: Mengubah status tugas secara instan melalui endpoint `PATCH /api/tugas/:id/toggle`.
-- **Edit Judul Inline**: Mengubah teks tugas langsung di tempat tanpa membuka modal atau halaman baru.
-- **Hapus Tugas**: Konfirmasi penghapusan tugas dengan penanganan respon 200 / 404.
-- **Filter Tugas**: Menyaring tampilan berdasarkan status (Semua, Aktif, Selesai) disertai kalkulasi jumlah tugas secara reaktif.
+- **Edit Judul Inline**: Mengubah teks tugas langsung di tempat tanpa membuka modal atau halaman baru. Enter untuk menyimpan, Escape untuk membatalkan.
+- **Hapus Tugas**: Konfirmasi penghapusan di dalam baris tugas dengan penanganan respon 200 / 404.
+- **Filter Tugas**: Menyaring tampilan berdasarkan status (Semua, Belum, Selesai) disertai kalkulasi jumlah tugas secara reaktif.
 - **State & Error Handling**: Penanganan visual yang jelas untuk kondisi *loading*, pesan *error* jaringan/server dengan tombol coba lagi (*retry*), dan tampilan kosong (*empty state*).
 - **Tampilan Responsif**: Desain bersih, modern, dan nyaman diakses melalui perangkat seluler (*mobile-friendly*) menggunakan CSS murni.
+
+---
+
+## 🎨 Fitur UI
+
+Antarmuka dirancang ulang dengan pendekatan *design token*: semua nilai warna, tipografi, spasi, radius, bayangan, dan transisi didefinisikan sebagai CSS custom properties di `frontend/src/styles/tokens.css`, lalu dikonsumsi oleh komponen. Tidak ada library UI, framework CSS, atau pustaka ikon — hanya CSS biasa dan SVG inline.
+
+- **Tema Terang & Gelap**: Mengikuti `prefers-color-scheme` secara default. Tombol pengalih tema di header menimpa pilihan itu dan menyimpannya di `localStorage` (dibungkus `try/catch` agar aman di mode privat). Skrip kecil di `index.html` menerapkan tema tersimpan sebelum render pertama supaya tidak ada kedipan warna.
+- **Ringkasan Progres**: "X dari Y tugas selesai" dengan progress bar tipis dan angka rata-rata tabular.
+- **Filter Segmented**: Kontrol *segmented* (Semua / Belum / Selesai) lengkap dengan jumlah per kategori; status aktif disampaikan lewat `aria-pressed`.
+- **State Loading**: *Skeleton* beranimasi shimmer menggantikan spinner, sehingga tata letak tidak melompat.
+- **State Kosong**: Ilustrasi SVG inline dan pesan yang berbeda untuk tiap filter.
+- **State Error**: Banner dengan tombol "Coba lagi". Empty state sengaja disembunyikan saat gagal memuat agar tidak menyesatkan.
+- **Toast**: Umpan balik singkat untuk aksi berhasil/gagal di area `aria-live`, tidak menutupi konten penting.
+- **Konfirmasi Hapus**: Konfirmasi ringan di dalam baris ("Ya, hapus" / "Batal") menggantikan `window.confirm`, dengan fokus otomatis ke tombol konfirmasi.
+- **Edit Inline**: Enter untuk menyimpan, Escape untuk membatalkan.
+- **Responsif**: Diuji pada 360px, 768px, dan 1280px tanpa overflow horizontal.
+- **Aksesibilitas**:
+  - Struktur semantik `header`, `main`, `section`, `ul`/`li`, `label`, dan `button`.
+  - Cincin fokus `:focus-visible` yang konsisten di seluruh kontrol.
+  - Target sentuh minimal 40×40px, termasuk ikon edit dan hapus yang memakai SVG inline dengan `aria-label`.
+  - Status tidak hanya mengandalkan warna: tugas selesai memakai coretan teks, warna, dan keterangan untuk pembaca layar.
+  - Animasi dihormati melalui `prefers-reduced-motion`.
+
+### Struktur CSS
+
+| File | Isi |
+| :--- | :--- |
+| `src/styles/tokens.css` | Design token, tema terang/gelap, reset, primitif tombol & input, utilitas |
+| `src/styles/layout.css` | Kerangka aplikasi: kanvas, kartu, pembatas bagian, footer |
+| `src/components/*.css` | Gaya per komponen, letak berdampingan dengan `.jsx`-nya |
 
 ---
 
@@ -23,7 +83,7 @@ Aplikasi manajemen tugas (to-do list) modern dengan arsitektur fullstack terpisa
 - **React 18** (JavaScript murni, tanpa TypeScript)
 - **Vite** (Build tool dan dev server ultra-cepat)
 - **Fetch API** bawaan browser (terpusat di `src/services/api.js`)
-- **CSS Murni** (Modern CSS variables, flexbox, mobile responsive, tanpa UI library eksternal)
+- **CSS Murni** (*design token* sebagai custom properties, flexbox, tema gelap, responsif, tanpa UI library eksternal)
 
 ### Backend
 - **Node.js** & **Express.js** (RESTful API framework)
@@ -86,21 +146,33 @@ tugas-app/
 │       ├── smoke.sh               # Smoke test otomatis endpoint menggunakan curl
 │       └── smoke.js               # Smoke test otomatis lintas platform via Node.js
 └── frontend/
-    ├── package.json               # Dependensi & skrip frontend React
+├── package.json               # Dependensi & skrip frontend React
     ├── vite.config.js             # Konfigurasi Vite
-    ├── index.html                 # Entry point HTML aplikasi
+    ├── index.html                 # Entry point HTML + skrip pre-paint tema
     ├── .env.example               # Contoh konfigurasi URL API frontend
     └── src/
         ├── main.jsx               # Entry point React DOM
         ├── App.jsx                # Komponen induk & manajemen state aplikasi
-        ├── App.css                # Styling CSS responsif
+        ├── styles/
+        │   ├── tokens.css         # Design token, tema terang/gelap, base & primitif
+        │   └── layout.css         # Kerangka halaman, kartu, dan footer
         ├── services/
         │   └── api.js             # Sentralisasi seluruh pemanggilan fetch API
         └── components/
+            ├── Header.jsx         # Judul aplikasi, tanggal, dan pengalih tema
+            ├── ThemeToggle.jsx    # Toggle tema terang/gelap + localStorage
+            ├── ProgressBar.jsx    # Ringkasan "X dari Y tugas selesai"
             ├── FormTugas.jsx      # Form input tambah tugas baru
-            ├── ItemTugas.jsx      # Item baris tugas (toggle, inline edit, hapus)
-            └── DaftarTugas.jsx    # Render list item tugas dan empty state
+            ├── FilterTabs.jsx     # Segmented control filter + jumlah per kategori
+            ├── DaftarTugas.jsx    # Render list, skeleton, dan empty state
+            ├── ItemTugas.jsx      # Baris tugas (toggle, inline edit, konfirmasi hapus)
+            ├── EmptyState.jsx     # Pesan kosong per filter + ilustrasi SVG
+            ├── Skeleton.jsx       # Placeholder shimmering saat memuat
+            ├── ErrorBanner.jsx    # Banner error + tombol coba lagi
+            └── Toast.jsx          # Notifikasi singkat di area aria-live
 ```
+
+Setiap komponen `.jsx` memiliki file `.css` dengan nama yang sama di direktori yang sama.
 
 ---
 
