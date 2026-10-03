@@ -1,0 +1,423 @@
+/* =============================================================================
+   Design Tokens, Tema, dan Base Style
+   -----------------------------------------------------------------------------
+   Semua warna, tipografi, spasi, radius, bayangan, dan transisi didefinisikan di
+   sini sebagai CSS custom properties. Komponen hanya Consumption token, tidak
+   pernah menulis nilai warna literal.
+   ============================================================================= */
+
+:root {
+  color-scheme: light;
+
+  /* --- Tipografi ------------------------------------------------------- */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-md: 1rem; /* 16px */
+  --text-lg: 1.25rem; /* 20px */
+  --text-xl: 1.75rem; /* 28px */
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.55;
+
+  /* --- Spasi (kelipatan 4px) -------------------------------------------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* --- Radius ----------------------------------------------------------- */
+  --radius-control: 8px;
+  --radius-card: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* --- Transisi --------------------------------------------------------- */
+  --duration-fast: 150ms;
+  --duration-base: 180ms;
+  --ease: cubic-bezier(0.2, 0, 0.2, 1);
+
+  /* --- Warna: tema terang (default) ------------------------------------- */
+  --canvas: #f6f7f9;
+  --surface: #ffffff;
+  --surface-sunken: #f1f3f7;
+  --surface-hover: #f4f5f8;
+
+  --text-strong: #101828;
+  --text-body: #344054;
+  --text-muted: #667085;
+  --text-inverse: #ffffff;
+
+  --border-subtle: #eaecf0;
+  --border-base: #d8dce4;
+  --border-strong: #b9c0cc;
+
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-soft: #eef2ff;
+  --accent-text: #4338ca;
+  --accent-border: #c7d2fe;
+
+  --success: #067647;
+  --success-soft: #ecfdf3;
+  --success-border: #abefc6;
+
+  --danger: #b42318;
+  --danger-hover: #912018;
+  --danger-soft: #fef3f2;
+  --danger-border: #fecdca;
+
+  --warning: #b54708;
+  --warning-soft: #fffaeb;
+  --warning-border: #fedf89;
+
+  --focus-ring: rgb(79 70 229 / 0.3);
+
+  --shadow-1: 0 1px 2px rgb(16 24 40 / 0.05);
+  --shadow-2: 0 8px 20px -6px rgb(16 24 40 / 0.12),
+    0 2px 6px -2px rgb(16 24 40 / 0.05);
+}
+
+/* --- Tema gelap: mengikuti preferensi sistem secara default -------------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --canvas: #0d0f14;
+    --surface: #151920;
+    --surface-sunken: #1c212a;
+    --surface-hover: #1e232d;
+
+    --text-strong: #f2f4f7;
+    --text-body: #d0d5dd;
+    --text-muted: #98a2b3;
+    --text-inverse: #101828;
+
+    --border-subtle: #232935;
+    --border-base: #2f3745;
+    --border-strong: #495366;
+
+    --accent: #818cf8;
+    --accent-hover: #a5b4fc;
+    --accent-soft: #1e1b4b;
+    --accent-text: #a5b4fc;
+    --accent-border: #3f3a7a;
+
+    --success: #47cd89;
+    --success-soft: #052e1a;
+    --success-border: #1a6b41;
+
+    --danger: #f97066;
+    --danger-hover: #fda29b;
+    --danger-soft: #3b1a18;
+    --danger-border: #7a2b26;
+
+    --warning: #fdb022;
+    --warning-soft: #3a2a10;
+    --warning-border: #7a5312;
+
+    --focus-ring: rgb(129 140 248 / 0.36);
+
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-2: 0 8px 20px -6px rgb(0 0 0 / 0.55),
+      0 2px 6px -2px rgb(0 0 0 / 0.4);
+  }
+}
+
+/* --- Tema gelap: pilihan eksplisit pengguna ----------------------------- */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --canvas: #0d0f14;
+  --surface: #151920;
+  --surface-sunken: #1c212a;
+  --surface-hover: #1e232d;
+
+  --text-strong: #f2f4f7;
+  --text-body: #d0d5dd;
+  --text-muted: #98a2b3;
+  --text-inverse: #101828;
+
+  --border-subtle: #232935;
+  --border-base: #2f3745;
+  --border-strong: #495366;
+
+  --accent: #818cf8;
+  --accent-hover: #a5b4fc;
+  --accent-soft: #1e1b4b;
+  --accent-text: #a5b4fc;
+  --accent-border: #3f3a7a;
+
+  --success: #47cd89;
+  --success-soft: #052e1a;
+  --success-border: #1a6b41;
+
+  --danger: #f97066;
+  --danger-hover: #fda29b;
+  --danger-soft: #3b1a18;
+  --danger-border: #7a2b26;
+
+  --warning: #fdb022;
+  --warning-soft: #3a2a10;
+  --warning-border: #7a5312;
+
+  --focus-ring: rgb(129 140 248 / 0.36);
+
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-2: 0 8px 20px -6px rgb(0 0 0 / 0.55),
+    0 2px 6px -2px rgb(0 0 0 / 0.4);
+}
+
+/* =============================================================================
+   Reset & Base
+   ============================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--text-body);
+  background-color: var(--canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--text-strong);
+  line-height: var(--leading-tight);
+  font-weight: var(--weight-semibold);
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+svg {
+  display: block;
+}
+
+/* Cincin fokus konsisten di seluruh aplikasi, hanya untuk navigasi keyboard. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* =============================================================================
+   Primitif: Tombol
+   ============================================================================= */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.btn--primary {
+  background-color: var(--accent);
+  color: var(--text-inverse);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+.btn--subtle {
+  background-color: var(--surface);
+  color: var(--text-body);
+  border-color: var(--border-base);
+}
+
+.btn--subtle:hover:not(:disabled) {
+  background-color: var(--surface-hover);
+  color: var(--text-strong);
+  border-color: var(--border-strong);
+}
+
+.btn--ghost {
+  background-color: transparent;
+  color: var(--text-muted);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background-color: var(--surface-hover);
+  color: var(--text-strong);
+}
+
+.btn--danger {
+  background-color: var(--danger);
+  color: var(--text-inverse);
+}
+
+.btn--danger:hover:not(:disabled) {
+  background-color: var(--danger-hover);
+}
+
+/* Tombol khusus ikon: target sentuh minimal 40x40px. */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  background-color: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease);
+}
+
+.icon-btn:hover:not(:disabled) {
+  background-color: var(--surface-hover);
+  color: var(--text-strong);
+}
+
+.icon-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.icon-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.icon-btn--danger:hover:not(:disabled) {
+  background-color: var(--danger-soft);
+  color: var(--danger);
+}
+
+/* =============================================================================
+   Primitif: Input
+   ============================================================================= */
+
+.input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  font-size: var(--text-md);
+  color: var(--text-strong);
+  background-color: var(--surface);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-control);
+  transition: border-color var(--duration-fast) var(--ease),
+    box-shadow var(--duration-fast) var(--ease);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.input:disabled {
+  cursor: not-allowed;
+  background-color: var(--surface-sunken);
+}
+
+.input--invalid {
+  border-color: var(--danger);
+}
+
+.input--invalid:focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px var(--danger-border);
+}
+
+/* =============================================================================
+   Utilitas
+   ============================================================================= */
+
+.u-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.u-muted {
+  color: var(--text-muted);
+}
+
+/* =============================================================================
+   Gerak: dihormati bila pengguna meminta pengurangan animasi
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

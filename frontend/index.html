@@ -2,9 +2,40 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Daftar Tugas | Portfolio Fullstack</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <title>Daftar Tugas — Aplikasi Manajemen Tugas Fullstack</title>
+    <meta
+      name="description"
+      content="Aplikasi manajemen tugas fullstack: React, Express REST API, dan PostgreSQL."
+    />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f6f7f9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0d0f14" media="(prefers-color-scheme: dark)" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      // Terapkan tema tersimpan sebelum render pertama agar tidak ada kedipan
+      // warna. Dibungkus try/catch karena localStorage bisa diblokir browser.
+      try {
+        var tema = localStorage.getItem('daftar-tugas:tema');
+        if (tema === 'terang' || tema === 'gelap') {
+          document.documentElement.setAttribute(
+            'data-theme',
+            tema === 'terang' ? 'light' : 'dark'
+          );
+        }
+      } catch (error) {
+        /* localStorage tidak tersedia: biarkan tema mengikuti sistem. */
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
