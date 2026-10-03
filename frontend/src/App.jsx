@@ -1,7 +1,15 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as api from './services/api';
+import Header from './components/Header';
+import ProgressBar from './components/ProgressBar';
+import ErrorBanner from './components/ErrorBanner';
 import FormTugas from './components/FormTugas';
+import FilterTabs from './components/FilterTabs';
 import DaftarTugas from './components/DaftarTugas';
+import Toast from './components/Toast';
+
+const DURASI_TOAST = 2800;
+const DURASI_KELUAR = 180;
 
 export default function App() {
   const [daftarTugas, setDaftarTugas] = useState([]);
@@ -9,7 +17,33 @@ export default function App() {
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [operatingId, setOperatingId] = useState(null);
-  const [filter, setFilter] = useState('semua'); // 'semua' | 'aktif' | 'selesai'
+  const [filter, setFilter] = useState('semua');
+  const [notifikasi, setNotifikasi] = useState(null);
+  const [leavingIds, setLeavingIds] = useState(() => new Set());
+
+  const toastTimerRef = useRef(null);
+  const leaveTimerRef = useRef(null);
+
+  // Tanggal diambil sekali saat render pertama agar header tidak ikut berubah
+  // setiap kali state berubah.
+  const [tanggal] = useState(() => new Date());
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(toastTimerRef.current);
+      window.clearTimeout(leaveTimerRef.current);
+    },
+    []
+  );
+
+  const tampilkanToast = useCallback((pesan, tipe = 'sukses') => {
+    window.clearTimeout(toastTimerRef.current);
+    setNotifikasi({ id: Date.now(), pesan, tipe });
+
+    toastTimerRef.current = window.setTimeout(() => {
+      setNotifikasi(null);
+    }, DURASI_TOAST);
+  }, []);
 
   // Mengambil daftar tugas dari backend
   const muatTugas = useCallback(async () => {
@@ -37,9 +71,12 @@ export default function App() {
       const tugasBaru = await api.createTugas(judul);
       // Immutably prepend tugas baru di awal list (urut terbaru dulu)
       setDaftarTugas((prev) => [tugasBaru, ...prev]);
+      tampilkanToast('Tugas ditambahkan.');
       return true;
     } catch (err) {
-      setError(err.message || 'Gagal menambahkan tugas baru.');
+      const pesan = err.message || 'Gagal menambahkan tugas baru.';
+      setError(pesan);
+      tampilkanToast(pesan, 'gagal');
       return false;
     } finally {
       setIsSubmitting(false);
@@ -53,11 +90,11 @@ export default function App() {
     try {
       const tugasUpdated = await api.toggleTugas(id);
       // Immutably update state
-      setDaftarTugas((prev) =>
-        prev.map((t) => (t.id === id ? tugasUpdated : t))
-      );
+      setDaftarTugas((prev) => prev.map((t) => (t.id === id ? tugasUpdated : t)));
     } catch (err) {
-      setError(err.message || 'Gagal mengubah status tugas.');
+      const pesan = err.message || 'Gagal mengubah status tugas.';
+      setError(pesan);
+      tampilkanToast(pesan, 'gagal');
     } finally {
       setOperatingId(null);
     }
@@ -70,140 +107,125 @@ export default function App() {
     try {
       const tugasUpdated = await api.updateTugas(id, payload);
       // Immutably update state
-      setDaftarTugas((prev) =>
-        prev.map((t) => (t.id === id ? tugasUpdated : t))
-      );
+      setDaftarTugas((prev) => prev.map((t) => (t.id === id ? tugasUpdated : t)));
+      tampilkanToast('Tugas diperbarui.');
       return true;
     } catch (err) {
-      setError(err.message || 'Gagal memperbarui judul tugas.');
+      const pesan = err.message || 'Gagal memperbarui judul tugas.';
+      setError(pesan);
+      tampilkanToast(pesan, 'gagal');
       return false;
     } finally {
       setOperatingId(null);
     }
   };
 
-  // Handler: Hapus tugas
+  // Handler: Hapus tugas. Item ditandai keluar lebih dulu supaya animasi
+  // selesai baru dilepas dari state.
   const handleHapus = async (id) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus tugas ini?')) {
-      return;
-    }
     setOperatingId(id);
     setError(null);
     try {
       await api.deleteTugas(id);
-      // Immutably remove item from state
-      setDaftarTugas((prev) => prev.filter((t) => t.id !== id));
+
+      setLeavingIds((prev) => new Set(prev).add(id));
+      leaveTimerRef.current = window.setTimeout(() => {
+        setDaftarTugas((prev) => prev.filter((t) => t.id !== id));
+        setLeavingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(id);
+          return next;
+        });
+      }, DURASI_KELUAR);
+
+      tampilkanToast('Tugas dihapus.');
+      return true;
     } catch (err) {
-      setError(err.message || 'Gagal menghapus tugas.');
+      const pesan = err.message || 'Gagal menghapus tugas.';
+      setError(pesan);
+      tampilkanToast(pesan, 'gagal');
+      return false;
     } finally {
       setOperatingId(null);
     }
   };
 
-  // Filter tugas untuk tampilan
-  const tugasTerfilter = daftarTugas.filter((tugas) => {
-    if (filter === 'aktif') return !tugas.selesai;
-    if (filter === 'selesai') return tugas.selesai;
-    return true;
-  });
+  const tugasTerfilter = useMemo(
+    () =>
+      daftarTugas.filter((tugas) => {
+        if (filter === 'aktif') return !tugas.selesai;
+        if (filter === 'selesai') return tugas.selesai;
+        return true;
+      }),
+    [daftarTugas, filter]
+  );
 
   const jumlahTotal = daftarTugas.length;
   const jumlahSelesai = daftarTugas.filter((t) => t.selesai).length;
   const jumlahAktif = jumlahTotal - jumlahSelesai;
 
+  const jumlahPerFilter = {
+    semua: jumlahTotal,
+    aktif: jumlahAktif,
+    selesai: jumlahSelesai,
+  };
+
   return (
-    <div className="app-layout">
-      <header className="app-header">
-        <div className="badge-portfolio">Portfolio Fullstack</div>
-        <h1 className="app-title">Daftar Tugas</h1>
-        <p className="app-subtitle">
-          Aplikasi Manajemen Tugas dengan React, Express REST API, dan PostgreSQL
-        </p>
-      </header>
+    <div className="app">
+      <div className="app__card">
+        <Header tanggal={tanggal} />
 
-      <main className="app-container">
-        {/* Banner Pesan Error */}
-        {error && (
-          <div className="alert-error" role="alert">
-            <span className="alert-icon">⚠️</span>
-            <div className="alert-body">
-              <strong>Terjadi Masalah:</strong>
-              <p>{error}</p>
-            </div>
-            <button
-              className="btn btn-sm btn-retry"
-              onClick={muatTugas}
-              disabled={loading}
-            >
-              Coba Lagi
-            </button>
-          </div>
-        )}
+        <ProgressBar total={jumlahTotal} selesai={jumlahSelesai} />
 
-        {/* Form Tambah Tugas */}
-        <section className="card form-card">
-          <h2 className="card-title">Tambah Tugas Baru</h2>
-          <FormTugas
-            onTambahTugas={handleTambahTugas}
-            isSubmitting={isSubmitting}
-          />
+        <ErrorBanner
+          pesan={error}
+          onCobaLagi={muatTugas}
+          isLoading={loading}
+        />
+
+        <section className="app__section" aria-labelledby="judul-tambah">
+          <h2 className="app__section-heading" id="judul-tambah">
+            Tugas Baru
+          </h2>
+          <FormTugas onTambahTugas={handleTambahTugas} isSubmitting={isSubmitting} />
         </section>
 
-        {/* Toolbar & Filter */}
-        <section className="card list-card">
-          <div className="toolbar">
-            <div className="filter-group">
-              <button
-                className={`filter-btn ${filter === 'semua' ? 'active' : ''}`}
-                onClick={() => setFilter('semua')}
-              >
-                Semua ({jumlahTotal})
-              </button>
-              <button
-                className={`filter-btn ${filter === 'aktif' ? 'active' : ''}`}
-                onClick={() => setFilter('aktif')}
-              >
-                Aktif ({jumlahAktif})
-              </button>
-              <button
-                className={`filter-btn ${filter === 'selesai' ? 'active' : ''}`}
-                onClick={() => setFilter('selesai')}
-              >
-                Selesai ({jumlahSelesai})
-              </button>
-            </div>
+        <section className="app__section" aria-labelledby="judul-daftar">
+          <h2 className="app__section-heading" id="judul-daftar">
+            Daftar Tugas
+          </h2>
 
-            <button
-              className="btn btn-refresh"
-              onClick={muatTugas}
-              disabled={loading}
-              title="Segarkan daftar"
-              aria-label="Segarkan daftar tugas"
-            >
-              🔄 Segarkan
-            </button>
-          </div>
-
-          {/* Komponen Daftar Tugas */}
-          <DaftarTugas
-            daftarTugas={tugasTerfilter}
-            onToggle={handleToggle}
-            onHapus={handleHapus}
-            onEdit={handleEdit}
-            operatingId={operatingId}
-            loading={loading}
+          <FilterTabs
+            filter={filter}
+            onChange={setFilter}
+            counts={jumlahPerFilter}
           />
-        </section>
-      </main>
 
-      <footer className="app-footer">
+          <div className="app__list">
+            <DaftarTugas
+              daftarTugas={tugasTerfilter}
+              filter={filter}
+              onToggle={handleToggle}
+              onHapus={handleHapus}
+              onEdit={handleEdit}
+              operatingId={operatingId}
+              leavingIds={leavingIds}
+              loading={loading}
+            />
+          </div>
+        </section>
+      </div>
+
+      <footer className="app__footer">
         <p>
-          Dibuat dengan ❤️ oleh <strong>Muhammad Faizin</strong> (FaizYA03)
+          Dibuat oleh <strong>Muhammad Faizin</strong> (@FaizYA03)
         </p>
-        <p className="footer-stack">
-          React + Vite • Node.js + Express • PostgreSQL (Parameterized Query)
+        <p className="app__footer-stack">
+          React + Vite &middot; Express REST API &middot; PostgreSQL
         </p>
       </footer>
+
+      <Toast notifikasi={notifikasi} />
     </div>
   );
 }

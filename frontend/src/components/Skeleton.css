@@ -1,0 +1,72 @@
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.skeleton__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background-color: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
+}
+
+.skeleton__box,
+.skeleton__line,
+.skeleton__icon {
+  background-color: var(--surface-sunken);
+  animation: skeleton-denyut 1.4s var(--ease) infinite;
+}
+
+.skeleton__box {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-left: 2px;
+  border-radius: 6px;
+}
+
+.skeleton__line {
+  flex: 1;
+  height: 10px;
+  border-radius: var(--radius-pill);
+}
+
+/* Baris kedua dibuat lebih pendek agar terlihat seperti teks natural. */
+.skeleton__item:nth-child(2) .skeleton__line {
+  max-width: 72%;
+}
+
+.skeleton__item:nth-child(3) .skeleton__line {
+  max-width: 84%;
+}
+
+.skeleton__actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--space-1);
+}
+
+.skeleton__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-control);
+}
+
+.skeleton__item:nth-child(2) .skeleton__icon,
+.skeleton__item:nth-child(3) .skeleton__icon {
+  animation-delay: 120ms;
+}
+
+@keyframes skeleton-denyut {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
