@@ -211,6 +211,7 @@ export default function App() {
               operatingId={operatingId}
               leavingIds={leavingIds}
               loading={loading}
+              error={error}
             />
           </div>
         </section>

@@ -17,9 +17,17 @@ export default function DaftarTugas({
   operatingId,
   leavingIds,
   loading,
+  error,
 }) {
   if (loading && daftarTugas.length === 0) {
     return <Skeleton />;
+  }
+
+  // Saat gagal memuat dan tidak ada data, banner error sudah menjelaskan
+  // kondisinya. Empty state akan menyesatkan karena terlihat seperti
+  // "tidak ada tugas", bukan "tidak bisa memuat".
+  if (error && daftarTugas.length === 0) {
+    return null;
   }
 
   if (daftarTugas.length === 0) {
