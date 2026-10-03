@@ -1,4 +1,4 @@
-﻿const { Pool } = require('pg');
+const { Pool } = require('pg');
 require('dotenv').config();
 
 // Inisialisasi pool koneksi PostgreSQL dari DATABASE_URL

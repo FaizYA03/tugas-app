@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Error Handler terpusat untuk Express API
  * Memastikan semua respon error memiliki format konsisten: { "message": "..." }
  */

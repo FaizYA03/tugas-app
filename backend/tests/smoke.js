@@ -1,4 +1,4 @@
-﻿// Smoke Test runner via Node.js
+// Smoke Test runner via Node.js
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 
 let total = 0;

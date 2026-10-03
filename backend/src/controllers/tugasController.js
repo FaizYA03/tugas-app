@@ -1,4 +1,4 @@
-﻿const db = require('../db');
+const db = require('../db');
 
 /**
  * Validasi parameter :id harus berupa bilangan bulat positif (> 0)

@@ -1,4 +1,4 @@
-﻿-- Schema Database Aplikasi Daftar Tugas (tugas_db)
+-- Schema Database Aplikasi Daftar Tugas (tugas_db)
 
 CREATE TABLE IF NOT EXISTS tugas (
   id SERIAL PRIMARY KEY,
