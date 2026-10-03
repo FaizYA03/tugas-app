@@ -1,0 +1,207 @@
+.task-item {
+  background-color: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
+  animation: task-item-masuk var(--duration-base) var(--ease);
+  transition: border-color var(--duration-fast) var(--ease),
+    background-color var(--duration-fast) var(--ease),
+    opacity var(--duration-base) var(--ease),
+    transform var(--duration-base) var(--ease);
+}
+
+.task-item:hover {
+  border-color: var(--border-base);
+}
+
+.task-item--done {
+  background-color: var(--surface-sunken);
+}
+
+.task-item--done:hover {
+  border-color: var(--border-base);
+}
+
+/* Item yang sedang keluar setelah dihapus. */
+.task-item--leaving {
+  opacity: 0;
+  transform: translateX(-8px);
+}
+
+@keyframes task-item-masuk {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- Baris utama ---------------------------------------------------------- */
+
+.task-item__body {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+}
+
+.task-item__title {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-md);
+  color: var(--text-strong);
+  overflow-wrap: anywhere;
+  transition: color var(--duration-fast) var(--ease);
+}
+
+.task-item__title.is-done {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+
+.task-item__actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--space-1);
+  /* Selalu terlihat di layar sentuh; muncul halus saat hover di mouse. */
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .task-item__actions {
+    opacity: 0;
+    transition: opacity var(--duration-fast) var(--ease);
+  }
+
+  .task-item:hover .task-item__actions,
+  .task-item:focus-within .task-item__actions {
+    opacity: 1;
+  }
+}
+
+/* --- Checkbox kustom ------------------------------------------------------ */
+
+.task-check {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  /* Target sentuh 40px meski kotak centangnya 20px. */
+  width: 40px;
+  height: 40px;
+  margin-left: -10px;
+  cursor: pointer;
+}
+
+.task-check__input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.task-check__box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: transparent;
+  background-color: var(--surface);
+  border: 1.5px solid var(--border-strong);
+  border-radius: 6px;
+  transition: background-color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
+}
+
+.task-check:hover .task-check__box {
+  border-color: var(--accent);
+}
+
+.task-check__input:focus-visible + .task-check__box {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.task-check__input:checked + .task-check__box {
+  color: var(--text-inverse);
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.task-check__input:disabled + .task-check__box {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.task-check__input:disabled {
+  cursor: not-allowed;
+}
+
+/* --- Edit inline ---------------------------------------------------------- */
+
+.task-item--editing {
+  border-color: var(--accent-border);
+  background-color: var(--surface);
+}
+
+.task-edit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.task-edit__input {
+  min-height: 40px;
+  font-size: var(--text-sm);
+}
+
+.task-edit__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.task-edit__error {
+  margin-right: auto;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--danger);
+}
+
+.btn--compact {
+  min-height: 34px;
+  padding: 0 var(--space-3);
+  font-size: var(--text-xs);
+}
+
+/* --- Konfirmasi hapus ----------------------------------------------------- */
+
+.task-confirm {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.task-confirm__text {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-strong);
+}
+
+.task-confirm__actions {
+  display: flex;
+  gap: var(--space-2);
+}
