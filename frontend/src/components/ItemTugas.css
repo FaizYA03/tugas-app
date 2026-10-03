@@ -205,3 +205,22 @@
   display: flex;
   gap: var(--space-2);
 }
+
+/* --- Layar sempit: beri ruang lebih pada judul tugas ------------------- */
+
+@media (max-width: 460px) {
+  .task-item__body {
+    gap: var(--space-2);
+    padding: var(--space-2);
+  }
+
+  /* 14px memberi ruang lebih pada judul panjang tanpa mengorbankan
+     target sentuh 40px milik kedua ikon aksi. */
+  .task-item__title {
+    font-size: var(--text-sm);
+  }
+
+  .task-item__actions {
+    gap: 0;
+  }
+}
