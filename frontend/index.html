@@ -23,14 +23,12 @@
 
     <script>
       // Terapkan tema tersimpan sebelum render pertama agar tidak ada kedipan
-      // warna. Dibungkus try/catch karena localStorage bisa diblokir browser.
+      // warna. Nilai harus cocok dengan selektor CSS [data-theme='light|dark'].
+      // Dibungkus try/catch karena localStorage bisa diblokir browser.
       try {
         var tema = localStorage.getItem('daftar-tugas:tema');
-        if (tema === 'terang' || tema === 'gelap') {
-          document.documentElement.setAttribute(
-            'data-theme',
-            tema === 'terang' ? 'light' : 'dark'
-          );
+        if (tema === 'light' || tema === 'dark') {
+          document.documentElement.setAttribute('data-theme', tema);
         }
       } catch (error) {
         /* localStorage tidak tersedia: biarkan tema mengikuti sistem. */
