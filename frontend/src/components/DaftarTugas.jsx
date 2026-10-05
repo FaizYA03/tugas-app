@@ -1,39 +1,42 @@
 import React from 'react';
 import ItemTugas from './ItemTugas';
+import Skeleton from './Skeleton';
+import EmptyState from './EmptyState';
+import './DaftarTugas.css';
 
 /**
- * Komponen wadah daftar tugas
- * Bertanggung jawab merender koleksi item tugas dengan key unik berbasis ID
+ * Wadah daftar tugas: menampilkan skeleton saat memuat, empty state per filter,
+ * atau daftar item bila data tersedia.
  */
 export default function DaftarTugas({
   daftarTugas,
+  filter,
+  pencarian,
   onToggle,
   onHapus,
   onEdit,
   operatingId,
+  leavingIds,
   loading,
+  error,
 }) {
   if (loading && daftarTugas.length === 0) {
-    return (
-      <div className="status-container">
-        <div className="spinner"></div>
-        <p>Memuat daftar tugas...</p>
-      </div>
-    );
+    return <Skeleton />;
+  }
+
+  // Saat gagal memuat dan tidak ada data, banner error sudah menjelaskan
+  // kondisinya. Empty state akan menyesatkan karena terlihat seperti
+  // "tidak ada tugas", bukan "tidak bisa memuat".
+  if (error && daftarTugas.length === 0) {
+    return null;
   }
 
   if (daftarTugas.length === 0) {
-    return (
-      <div className="status-container kosong">
-        <p className="ikon-kosong">🎉</p>
-        <p className="teks-kosong">Belum ada tugas yang tersimpan.</p>
-        <p className="subteks-kosong">Tuliskan tugas baru di atas untuk mulai produktif!</p>
-      </div>
-    );
+    return <EmptyState filter={filter} pencarian={pencarian} />;
   }
 
   return (
-    <ul className="daftar-tugas">
+    <ul className="task-list">
       {daftarTugas.map((tugas) => (
         <ItemTugas
           key={tugas.id}
@@ -42,6 +45,7 @@ export default function DaftarTugas({
           onHapus={onHapus}
           onEdit={onEdit}
           isOperating={operatingId === tugas.id}
+          isLeaving={leavingIds.has(tugas.id)}
         />
       ))}
     </ul>

@@ -1,0 +1,106 @@
+/* =============================================================================
+   Layout Aplikasi: kanvas, kartu utama, header, dan footer
+   ============================================================================= */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: var(--space-8) var(--space-4) var(--space-6);
+}
+
+/* Kartu pembungkus seluruh konten, lebar dibatasi agar mudah dipindai. */
+.app__card {
+  width: 100%;
+  max-width: 680px;
+  padding: var(--space-8);
+  background-color: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-2);
+}
+
+/* Pembatas tipis antar-bagian; memisahkan konten tanpa menambah kotak. */
+.app__section {
+  padding-top: var(--space-6);
+  margin-top: var(--space-6);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.app__section-heading {
+  margin-bottom: var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* --- Daftar tugas --------------------------------------------------------- */
+
+.app__list {
+  margin-top: var(--space-4);
+}
+
+/* --- Banner mode demo (GitHub Pages, tanpa backend) -------------------------- */
+
+.demo-banner {
+  margin-top: var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--accent-text);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-control);
+}
+
+.demo-banner strong {
+  font-weight: var(--weight-semibold);
+}
+
+/* --- Footer --------------------------------------------------------------- */
+
+.app__footer {
+  width: 100%;
+  max-width: 680px;
+  margin-top: var(--space-6);
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.app__footer strong {
+  color: var(--text-body);
+  font-weight: var(--weight-medium);
+}
+
+.app__footer-stack {
+  margin-top: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  opacity: 0.85;
+}
+
+/* --- Responsif ------------------------------------------------------------ */
+
+@media (max-width: 640px) {
+  .app {
+    padding: var(--space-4) var(--space-3) var(--space-6);
+  }
+
+  .app__card {
+    padding: var(--space-6) var(--space-4);
+    border-radius: var(--radius-card);
+  }
+}
+
+@media (max-width: 380px) {
+  .app {
+    padding: var(--space-3) var(--space-2) var(--space-6);
+  }
+
+  .app__card {
+    padding: var(--space-4) var(--space-3);
+  }
+}

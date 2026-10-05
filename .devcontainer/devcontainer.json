@@ -1,0 +1,27 @@
+// Buka repo ini di GitHub Codespaces: seluruh stack (PostgreSQL + API + UI)
+// disiapkan otomatis. Lihat README bagian "Coba Online tanpa Install".
+{
+  "name": "Tugas App Fullstack",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint", "bradlc.vscode-tailwindcss"]
+    }
+  },
+
+  // Menunggu database sehat, install dependensi, lalu siapkan file .env
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+
+  "portsAttributes": {
+    "5173": { "label": "Frontend (Vite)", "onAutoForward": "openPreview" },
+    "3000": { "label": "Backend API", "onAutoForward": "silent" }
+  },
+
+  // Terminal 1: cd backend && npm run dev
+  // Terminal 2: cd frontend && npm run dev
+  "postStartCommand": "echo 'Jalankan: (1) cd backend && npm run dev | (2) cd frontend && npm run dev'"
+}
