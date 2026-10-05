@@ -43,6 +43,22 @@
   margin-top: var(--space-4);
 }
 
+/* --- Banner mode demo (GitHub Pages, tanpa backend) -------------------------- */
+
+.demo-banner {
+  margin-top: var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--accent-text);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-control);
+}
+
+.demo-banner strong {
+  font-weight: var(--weight-semibold);
+}
+
 /* --- Footer --------------------------------------------------------------- */
 
 .app__footer {

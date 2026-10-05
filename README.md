@@ -1,6 +1,22 @@
 # Aplikasi Daftar Tugas (To-Do List) Fullstack
 
+[![CI](https://github.com/FaizYA03/tugas-app/actions/workflows/ci.yml/badge.svg)](https://github.com/FaizYA03/tugas-app/actions/workflows/ci.yml)
+[![Demo](https://github.com/FaizYA03/tugas-app/actions/workflows/pages-demo.yml/badge.svg)](https://faizya03.github.io/tugas-app/)
+[![Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/FaizYA03/tugas-app)
+
 Aplikasi manajemen tugas (to-do list) modern dengan arsitektur fullstack terpisah (monorepo): **React (Frontend)**, **Express REST API (Backend)**, dan **PostgreSQL (Database)**. Proyek ini dibangun dengan standar industri, mengedepankan keamanan query, validasi input berlapis, penanganan error terpusat, dan performa tinggi tanpa dependensi berlebih.
+
+---
+
+## 🌐 Coba Online (Tanpa Install)
+
+| Cara | Cocok untuk | Langkah |
+| :--- | :--- | :--- |
+| **Live demo** (GitHub Pages) | Klik-klik cepat | Buka **https://faizya03.github.io/tugas-app/** — frontend berjalan dalam **mode demo**: API disimulasikan di browser, data tersimpan di `localStorage`. Login dengan `demo@example.com` / `demo1234` atau daftar akun baru. |
+| **Codespaces** (fullstack asli) | Mencoba API + database sungguhan | Di halaman repo klik **Code ▸ Codespaces ▸ Create codespace**, tunggu setup otomatis, lalu jalankan `cd backend && npm run dev` (terminal 1) dan `cd frontend && npm run dev` (terminal 2). |
+| **Deploy backend sendiri** | Demo permanen fullstack | Deploy `backend/` + Postgres ke Render/Railway/Fly (atau VPS), isi `VITE_API_URL` frontend dengan URL API tersebut, lalu build & host `frontend/` di Vercel/Netlify/GitHub Pages (mode normal, bukan demo). |
+
+> Mengaktifkan live demo dari nol: push branch utama, lalu **Settings ▸ Pages ▸ Build and deployment ▸ Source: GitHub Actions**. Workflow `Demo (GitHub Pages)` akan membuild otomatis di setiap push.
 
 ---
 
@@ -404,6 +420,13 @@ Pengujian API (`node:test` + `supertest`, 19 kasus: auth, isolasi antar-user, CR
 
 ```bash
 cd backend
+npm test
+```
+
+Pengujian simulasi frontend mode demo (tanpa browser):
+
+```bash
+cd frontend
 npm test
 ```
 

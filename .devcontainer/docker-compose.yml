@@ -1,0 +1,32 @@
+# Compose khusus development/Codespaces: hanya database.
+# Backend & frontend berjalan via `npm run dev` di terminal (hot reload).
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/javascript-node:20-bookworm
+    volumes:
+      - ..:/workspace:cached
+    working_dir: /workspace
+    command: sleep infinity
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tugas_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Skema + seed demo dimuat otomatis saat volume masih kosong
+      - ../backend/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d tugas_db']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  pgdata:

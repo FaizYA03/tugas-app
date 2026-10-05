@@ -282,6 +282,13 @@ export default function App() {
       <div className="app__card">
         <Header tanggal={tanggal} user={user} onLogout={() => handleLogout()} />
 
+        {api.MODE_DEMO && (
+          <p className="demo-banner" role="note">
+            <strong>Mode demo:</strong> data tersimpan di browser saja, tidak
+            dikirim ke server mana pun. Jangan memakai kata sandi asli.
+          </p>
+        )}
+
         {!token || !user ? (
           <Auth onAuth={handleAuth} />
         ) : (

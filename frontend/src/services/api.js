@@ -2,7 +2,15 @@
  * Layanan Komunikasi REST API Terpusat
  * Menggunakan base URL dari environment variable VITE_API_URL.
  * Token JWT disimpan di localStorage dan dikirim via header Authorization.
+ *
+ * MODE DEMO: bila dibuild dengan VITE_DEMO_MODE=true (untuk GitHub Pages),
+ * seluruh fungsi didelegasikan ke services/demo.js — simulasi API di browser
+ * dengan kontrak respons yang identik, sehingga komponen tidak perlu berubah.
  */
+import * as demo from './demo';
+
+export const MODE_DEMO = import.meta.env.VITE_DEMO_MODE === 'true';
+
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 const TOKEN_KEY = 'daftar-tugas:token';
 
@@ -84,11 +92,12 @@ const json = (body) => ({
 /**
  * Mendaftarkan akun baru. Mengembalikan { user, token }.
  */
-export async function register({ nama, email, password }) {
+export async function register(payload) {
+  if (MODE_DEMO) return demo.register(payload);
   const hasil = await safeFetch(`${BASE_URL}/auth/register`, {
     method: 'POST',
     headers: json(),
-    body: JSON.stringify({ nama, email, password }),
+    body: JSON.stringify(payload),
   });
   if (hasil.token) setToken(hasil.token);
   return hasil;
@@ -97,11 +106,12 @@ export async function register({ nama, email, password }) {
 /**
  * Masuk dengan email + password. Mengembalikan { user, token }.
  */
-export async function login({ email, password }) {
+export async function login(payload) {
+  if (MODE_DEMO) return demo.login(payload);
   const hasil = await safeFetch(`${BASE_URL}/auth/login`, {
     method: 'POST',
     headers: json(),
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify(payload),
   });
   if (hasil.token) setToken(hasil.token);
   return hasil;
@@ -111,10 +121,12 @@ export async function login({ email, password }) {
  * Mengambil profil pengguna dari token aktif.
  */
 export async function getMe() {
+  if (MODE_DEMO) return demo.getMe();
   return safeFetch(`${BASE_URL}/auth/me`);
 }
 
 export function logout() {
+  if (MODE_DEMO) demo.logout();
   setToken(null);
 }
 
@@ -126,6 +138,7 @@ export function logout() {
  * Mengembalikan { data, pagination, counts }.
  */
 export async function getTugas({ status = 'semua', q = '', prioritas = 'semua', sort = 'terbaru', page = 1, limit = 10 } = {}) {
+  if (MODE_DEMO) return demo.getTugas({ status, q, prioritas, sort, page, limit });
   const params = new URLSearchParams({
     status,
     sort,
@@ -141,17 +154,19 @@ export async function getTugas({ status = 'semua', q = '', prioritas = 'semua', 
  * Mengambil tugas tertentu berdasarkan ID
  */
 export async function getTugasById(id) {
+  if (MODE_DEMO) return demo.getTugasById(id);
   return safeFetch(`${BASE_URL}/tugas/${id}`);
 }
 
 /**
  * Menambahkan tugas baru: { judul, prioritas?, tenggat? }
  */
-export async function createTugas({ judul, prioritas = 'sedang', tenggat = null }) {
+export async function createTugas(payload) {
+  if (MODE_DEMO) return demo.createTugas(payload);
   return safeFetch(`${BASE_URL}/tugas`, {
     method: 'POST',
     headers: json(),
-    body: JSON.stringify({ judul, prioritas, tenggat }),
+    body: JSON.stringify(payload),
   });
 }
 
@@ -159,6 +174,7 @@ export async function createTugas({ judul, prioritas = 'sedang', tenggat = null 
  * Memperbarui judul / status / prioritas / tenggat tugas
  */
 export async function updateTugas(id, payload) {
+  if (MODE_DEMO) return demo.updateTugas(id, payload);
   return safeFetch(`${BASE_URL}/tugas/${id}`, {
     method: 'PUT',
     headers: json(),
@@ -170,6 +186,7 @@ export async function updateTugas(id, payload) {
  * Membalikkan (toggle) status selesai tugas
  */
 export async function toggleTugas(id) {
+  if (MODE_DEMO) return demo.toggleTugas(id);
   return safeFetch(`${BASE_URL}/tugas/${id}/toggle`, {
     method: 'PATCH',
   });
@@ -179,6 +196,7 @@ export async function toggleTugas(id) {
  * Menghapus tugas berdasarkan ID
  */
 export async function deleteTugas(id) {
+  if (MODE_DEMO) return demo.deleteTugas(id);
   return safeFetch(`${BASE_URL}/tugas/${id}`, {
     method: 'DELETE',
   });
@@ -188,6 +206,7 @@ export async function deleteTugas(id) {
  * Memeriksa status kesehatan server
  */
 export async function checkHealth() {
+  if (MODE_DEMO) return demo.checkHealth();
   // BASE_URL sudah berakhiran /api sehingga menjadi /api/health
   const response = await fetch(`${BASE_URL}/health`);
   return handleResponse(response);
