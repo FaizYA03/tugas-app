@@ -38,9 +38,10 @@ function formatTanggal(sekarang) {
 }
 
 /**
- * Header aplikasi: judul, tanggal hari ini, dan tombol pengalih tema.
+ * Header aplikasi: judul, tanggal hari ini, info pengguna + tombol keluar,
+ * dan tombol pengalih tema.
  */
-export default function Header({ tanggal }) {
+export default function Header({ tanggal, user, onLogout }) {
   return (
     <header className="header">
       <div className="header__text">
@@ -49,7 +50,23 @@ export default function Header({ tanggal }) {
         <p className="header__subtitle">{formatTanggal(tanggal)}</p>
       </div>
 
-      <ThemeToggle />
+      <div className="header__side">
+        {user && (
+          <div className="header__user">
+            <span className="header__user-name" title={user.email}>
+              {user.nama}
+            </span>
+            <button
+              type="button"
+              className="btn btn--subtle btn--compact"
+              onClick={onLogout}
+            >
+              Keluar
+            </button>
+          </div>
+        )}
+        <ThemeToggle />
+      </div>
     </header>
   );
 }

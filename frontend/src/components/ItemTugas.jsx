@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { labelTenggat, tenggatKeInput, LABEL_PRIORITAS } from '../utils/tanggal';
 import './ItemTugas.css';
 
 const MAKSIMAL = 200;
@@ -29,12 +30,20 @@ function IconHapus() {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+      <path
+        d="M10 11v6M14 11v6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
 
 /**
- * Baris satu tugas: centang selesai, edit judul inline, dan hapus dengan
+ * Baris satu tugas: centang selesai, badge prioritas + tenggat,
+ * edit inline (judul, prioritas, tenggat), dan hapus dengan
  * konfirmasi ringan (bukan window.confirm).
  */
 export default function ItemTugas({
@@ -47,26 +56,34 @@ export default function ItemTugas({
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [judulEdit, setJudulEdit] = useState(tugas.judul);
+  const [prioritasEdit, setPrioritasEdit] = useState(tugas.prioritas || 'sedang');
+  const [tenggatEdit, setTenggatEdit] = useState(() => tenggatKeInput(tugas.tenggat));
   const [editError, setEditError] = useState('');
   const [isConfirming, setIsConfirming] = useState(false);
 
   const editInputRef = useRef(null);
 
-  // Judul di luar mode edit selalu mengikuti data terbaru dari server.
+  // Nilai di luar mode edit selalu mengikuti data terbaru dari server.
   useEffect(() => {
     if (!isEditing) {
       setJudulEdit(tugas.judul);
+      setPrioritasEdit(tugas.prioritas || 'sedang');
+      setTenggatEdit(tenggatKeInput(tugas.tenggat));
     }
-  }, [tugas.judul, isEditing]);
+  }, [tugas.judul, tugas.prioritas, tugas.tenggat, isEditing]);
 
   const mulaiEdit = () => {
     setJudulEdit(tugas.judul);
+    setPrioritasEdit(tugas.prioritas || 'sedang');
+    setTenggatEdit(tenggatKeInput(tugas.tenggat));
     setEditError('');
     setIsEditing(true);
   };
 
   const batalEdit = () => {
     setJudulEdit(tugas.judul);
+    setPrioritasEdit(tugas.prioritas || 'sedang');
+    setTenggatEdit(tenggatKeInput(tugas.tenggat));
     setEditError('');
     setIsEditing(false);
   };
@@ -85,12 +102,11 @@ export default function ItemTugas({
       return;
     }
 
-    if (cleanJudul === tugas.judul) {
-      setIsEditing(false);
-      return;
-    }
-
-    const sukses = await onEdit(tugas.id, { judul: cleanJudul });
+    const sukses = await onEdit(tugas.id, {
+      judul: cleanJudul,
+      prioritas: prioritasEdit,
+      tenggat: tenggatEdit || null,
+    });
     if (sukses) {
       setIsEditing(false);
     }
@@ -109,7 +125,7 @@ export default function ItemTugas({
     if (sukses) {
       setIsConfirming(false);
     }
-};
+  };
 
   const kelasItem = [
     'task-item',
@@ -118,6 +134,8 @@ export default function ItemTugas({
   ]
     .filter(Boolean)
     .join(' ');
+
+  const infoTenggat = labelTenggat(tugas.tenggat, tugas.selesai);
 
   if (isEditing) {
     return (
@@ -142,6 +160,38 @@ export default function ItemTugas({
             autoFocus
             aria-invalid={Boolean(editError)}
           />
+
+          <div className="task-edit__meta">
+            <div className="task-edit__field">
+              <label className="task-edit__label" htmlFor={`edit-prioritas-${tugas.id}`}>
+                Prioritas
+              </label>
+              <select
+                id={`edit-prioritas-${tugas.id}`}
+                className="input task-edit__select"
+                value={prioritasEdit}
+                onChange={(e) => setPrioritasEdit(e.target.value)}
+                disabled={isOperating}
+              >
+                <option value="rendah">Rendah</option>
+                <option value="sedang">Sedang</option>
+                <option value="tinggi">Tinggi</option>
+              </select>
+            </div>
+            <div className="task-edit__field">
+              <label className="task-edit__label" htmlFor={`edit-tenggat-${tugas.id}`}>
+                Tenggat
+              </label>
+              <input
+                id={`edit-tenggat-${tugas.id}`}
+                type="date"
+                className="input task-edit__select"
+                value={tenggatEdit}
+                onChange={(e) => setTenggatEdit(e.target.value)}
+                disabled={isOperating}
+              />
+            </div>
+          </div>
 
           <div className="task-edit__actions">
             {editError && (
@@ -220,13 +270,29 @@ export default function ItemTugas({
             </span>
           </label>
 
-          <span className={`task-item__title ${tugas.selesai ? 'is-done' : ''}`}>
-            {tugas.judul}
-          </span>
+          <div className="task-item__content">
+            <span className={`task-item__title ${tugas.selesai ? 'is-done' : ''}`}>
+              {tugas.judul}
+            </span>
 
-          <span className="task-item__status u-visually-hidden">
-            {tugas.selesai ? 'Selesai' : 'Belum selesai'}
-          </span>
+            <span className="task-item__status u-visually-hidden">
+              {tugas.selesai ? 'Selesai' : 'Belum selesai'}
+            </span>
+
+            <span className="task-item__badges">
+              <span
+                className={`badge badge--${tugas.prioritas || 'sedang'}`}
+                title={`Prioritas ${LABEL_PRIORITAS[tugas.prioritas] || 'Sedang'}`}
+              >
+                {LABEL_PRIORITAS[tugas.prioritas] || 'Sedang'}
+              </span>
+              {infoTenggat && (
+                <span className={`badge badge--tenggat-${infoTenggat.tone}`}>
+                  {infoTenggat.teks}
+                </span>
+              )}
+            </span>
+          </div>
 
           <div className="task-item__actions">
             <button
@@ -234,8 +300,8 @@ export default function ItemTugas({
               className="icon-btn"
               onClick={mulaiEdit}
               disabled={isOperating}
-              title="Edit judul"
-              aria-label={`Edit judul tugas "${tugas.judul}"`}
+              title="Edit tugas"
+              aria-label={`Edit tugas "${tugas.judul}"`}
             >
               <IconEdit />
             </button>

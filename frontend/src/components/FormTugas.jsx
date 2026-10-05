@@ -34,11 +34,13 @@ function Spinner() {
 }
 
 /**
- * Formulir menambahkan tugas baru.
+ * Formulir menambahkan tugas baru: judul + prioritas + tenggat opsional.
  * Enter submitting, validasi lokal, dan indikator kecil selama request berjalan.
  */
 export default function FormTugas({ onTambahTugas, isSubmitting }) {
   const [judul, setJudul] = useState('');
+  const [prioritas, setPrioritas] = useState('sedang');
+  const [tenggat, setTenggat] = useState('');
   const [validationError, setValidationError] = useState('');
 
   const handleChange = (e) => {
@@ -63,10 +65,16 @@ export default function FormTugas({ onTambahTugas, isSubmitting }) {
     }
 
     setValidationError('');
-    const sukses = await onTambahTugas(cleanJudul);
+    const sukses = await onTambahTugas({
+      judul: cleanJudul,
+      prioritas,
+      tenggat: tenggat || null,
+    });
 
     if (sukses) {
       setJudul('');
+      setPrioritas('sedang');
+      setTenggat('');
     }
   };
 
@@ -103,6 +111,39 @@ export default function FormTugas({ onTambahTugas, isSubmitting }) {
           {isSubmitting && <Spinner />}
           <span>{isSubmitting ? 'Menyimpan' : 'Tambah'}</span>
         </button>
+      </div>
+
+      <div className="form-tugas__meta">
+        <div className="form-tugas__field">
+          <label className="form-tugas__label" htmlFor="input-prioritas">
+            Prioritas
+          </label>
+          <select
+            id="input-prioritas"
+            className="input form-tugas__select"
+            value={prioritas}
+            onChange={(e) => setPrioritas(e.target.value)}
+            disabled={isSubmitting}
+          >
+            <option value="rendah">Rendah</option>
+            <option value="sedang">Sedang</option>
+            <option value="tinggi">Tinggi</option>
+          </select>
+        </div>
+
+        <div className="form-tugas__field">
+          <label className="form-tugas__label" htmlFor="input-tenggat">
+            Tenggat (opsional)
+          </label>
+          <input
+            id="input-tenggat"
+            type="date"
+            className="input form-tugas__date"
+            value={tenggat}
+            onChange={(e) => setTenggat(e.target.value)}
+            disabled={isSubmitting}
+          />
+        </div>
       </div>
 
       <div className="form-tugas__footer" id="form-tugas-keterangan">

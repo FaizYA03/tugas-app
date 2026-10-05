@@ -90,9 +90,24 @@ function IlonJam() {
 
 /**
  * Tampilan saat tidak ada tugas untuk filter aktif.
- * Pesan menyesuaikan filter agar konteksnya jelas.
+ * Pesan menyesuaikan filter agar konteksnya jelas; pencarian yang aktif
+ * mengalahkan pesan filter karena itu penyebab paling mungkin.
  */
-export default function EmptyState({ filter }) {
+export default function EmptyState({ filter, pencarian }) {
+  if (pencarian) {
+    return (
+      <div className="empty-state">
+        <span className="empty-state__icon">
+          <IlonChecklist />
+        </span>
+        <p className="empty-state__title">Tidak ada hasil</p>
+        <p className="empty-state__text">
+          Tidak ditemukan tugas untuk &ldquo;{pencarian}&rdquo;.
+        </p>
+      </div>
+    );
+  }
+
   const { judul, pesan, Ikon } = KONTEN[filter] || KONTEN.semua;
 
   return (

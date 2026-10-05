@@ -11,6 +11,7 @@ import './DaftarTugas.css';
 export default function DaftarTugas({
   daftarTugas,
   filter,
+  pencarian,
   onToggle,
   onHapus,
   onEdit,
@@ -31,7 +32,7 @@ export default function DaftarTugas({
   }
 
   if (daftarTugas.length === 0) {
-    return <EmptyState filter={filter} />;
+    return <EmptyState filter={filter} pencarian={pencarian} />;
   }
 
   return (
